@@ -1,0 +1,8 @@
+#ROOT files
+*.root 
+
+#Output folder
+output/
+
+#Condor submission folder
+condor_submission/
