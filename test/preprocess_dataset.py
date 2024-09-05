@@ -32,11 +32,26 @@ os.makedirs("condor_submission", exist_ok=True)
 #Make a directory for condor logs
 os.makedirs("condor_submission/logs", exist_ok=True)
 
+#If the proxy exists in $X509_USER_PROXY, copy it to the condor submission directory
+if args.grid:
+    if os.path.exists(os.getenv("X509_USER_PROXY")):
+        #Check if the proxy has already been copied
+        if not os.path.exists("condor_submission/cms.proxy"):
+            os.system(f"cp {os.getenv('X509_USER_PROXY')} condor_submission/cms.proxy")
+
+
 #Make the input arguments file for the condor job
 with open("condor_submission/preprocess_args.txt", "w") as f:
     #Count the number of files in the dataset
     files = None
     if args.grid == True:
+        #Subdirectory structure
+        #subdirs = os.popen(f"gfal-ls {dataset_input}").read().strip().split("\n")
+        #print("Number of subdirectories: {}".format(len(subdirs)))
+        #files = []
+        #for subdir in subdirs:
+        #    files += os.popen(f"gfal-ls {dataset_input}/{subdir}").read().strip().split("\n")
+        
         files = os.popen(f"gfal-ls {dataset_input}").read().strip().split("\n")
     else:
         files = os.popen(f"ls {dataset_input}").read().strip().split("\n")

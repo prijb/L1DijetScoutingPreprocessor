@@ -16,6 +16,9 @@ args = parser.parse_args()
 fname = args.input
 oname = args.output
 
+#Change " .root" to "_hist.root"
+oname_hist = oname.replace(".root", "_hist.root")
+
 #Start processing
 start = time.time()
 
@@ -104,7 +107,7 @@ h_mjj_bkg_2 = df.Filter("region_bkg_2").Histo1D(("h_mjj_bkg_2", "m_{{jj}}", 110,
 h_deta = df.Histo1D(("h_deta", "#Delta#eta_{{jj}}", 50, 0, 3.0), "deta")
 
 #Save histograms
-f = ROOT.TFile("{}".format(oname), "RECREATE")
+f = ROOT.TFile("{}".format(oname_hist), "RECREATE")
 #Store the number of events
 n_entries_param = ROOT.TParameter(float)("n_entries", n_entries)
 n_entries_param.Write()
@@ -114,6 +117,10 @@ h_mjj_bkg_1.Write()
 h_mjj_bkg_2.Write()
 h_deta.Write()
 f.Close()
+
+#Save a snapshot of the data with the regions specifed
+df.Snapshot("Events", "{}".format(oname), ["mjj", "region_sig", "region_bkg_1", "region_bkg_2"])
+
 
 #End processing
 end = time.time()
